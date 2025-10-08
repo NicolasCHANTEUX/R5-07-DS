@@ -1,0 +1,29 @@
+name: Q5 - Archive avec date
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer fichier Q5_archive_date.txt
+        run: |
+          date_str=$(date +'%d-%m-%Y')
+          echo "Nom : Nicolas CHANTEUX" > Q5_archive_${date_str}.txt
+          cat Q5.java >> Q5_archive_${date_str}.txt
+
+      - name: Commit et push
+        continue-on-error: true
+        run: |
+          git config --global user.name "NicolasCHANTEUX"
+          git config --global user.email "nicolas.chtx@gmail.com"
+          git add Q5_archive_*.txt
+          git commit -m "Ajout Q5_archive daté" || echo "Rien à commiter"
+          git push || echo "Rien à pousser"
