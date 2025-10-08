@@ -1,0 +1,31 @@
+name: Q2 - Ajouter infos à TOTO.txt
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer Q2_archive_TOTO.txt avec infos
+        run: |
+          echo "Nom : Nicolas CHANTEUX" > Q2_archive_TOTO.txt
+          echo "Date : $(date)" >> Q2_archive_TOTO.txt
+          echo "Taille :" $(wc -c < TOTO.txt) "caractères" >> Q2_archive_TOTO.txt
+          echo "" >> Q2_archive_TOTO.txt
+          cat TOTO.txt >> Q2_archive_TOTO.txt
+
+      - name: Commit et push
+        continue-on-error: true
+        run: |
+          git config --global user.name "NicolasCHANTEUX"
+          git config --global user.email "nicolas.chtx@gmail.com"
+          git add Q2_archive_TOTO.txt
+          git commit -m "Ajout Q2_archive_TOTO.txt" || echo "Rien à commiter"
+          git push || echo "Rien à pousser"
