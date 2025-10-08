@@ -1,0 +1,29 @@
+name: Q3 - Archive Java
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer Q3_archive_java.txt
+        run: |
+          echo "Nom : Nicolas CHANTEUX" > Q3_archive_java.txt
+          echo "" >> Q3_archive_java.txt
+          cat Q3.java >> Q3_archive_java.txt
+
+      - name: Commit et push
+        continue-on-error: true
+        run: |
+          git config --global user.name "NicolasCHANTEUX"
+          git config --global user.email "nicolas.chtx@gmail.com"
+          git add Q3_archive_java.txt
+          git commit -m "Ajout Q3_archive_java.txt" || echo "Rien à commiter"
+          git push || echo "Rien à pousser"
