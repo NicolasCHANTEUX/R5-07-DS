@@ -1,0 +1,44 @@
+name: Q6 - Archive avec diff
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer fichier Q6_archive_date.txt
+        run: |
+          date_str=$(date +'%d-%m-%Y-%H%M%S')
+          echo "Nom : Nicolas CHANTEUX" > Q6_archive_${date_str}.txt
+          echo "" >> Q6_archive_${date_str}.txt
+          wc Q6.java >> Q6_archive_${date_str}.txt
+          echo "" >> Q6_archive_${date_str}.txt
+          cat Q6.java >> Q6_archive_${date_str}.txt
+
+      - name: Comparer avec la version précédente
+        run: |
+          echo "Comparaison avec la version précédente..." > Q6_différences.txt
+          files=(Q6_archive_*.txt)
+          if [ ${#files[@]} -gt 1 ]; then
+            latest=${files[-1]}
+            previous=${files[-2]}
+            diff "$previous" "$latest" >> Q6_différences.txt || true
+          else
+            echo "Pas de version précédente à comparer" >> Q6_différences.txt
+          fi
+
+      - name: Commit et push
+        continue-on-error: true
+        run: |
+          git config --global user.name "NicolasCHANTEUX"
+          git config --global user.email "nicolas.chtx@gmail.com"
+          git add Q6_archive_*.txt Q6_différences.txt
+          git commit -m "Ajout Q6_archive et différences" || echo "Rien à commiter"
+          git push || echo "Rien à pousser"
